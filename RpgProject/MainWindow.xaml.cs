@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace RpgProject
 {
@@ -19,22 +20,13 @@ namespace RpgProject
     public partial class MainWindow : Window
     {
         Player player;
-        List<Location> map;
-
+        Map map;
+        
         public MainWindow() {
             InitializeComponent();
-            player = new Player();
+            player = new Player(32);
             screen.Children.Add(player.Img);
-            map = new List<Location> {
-                // Bordes del mapa.
-                new Location(0, 0, screen.Width, 0),
-                new Location(0, 0, 0, screen.Height),
-                new Location(0, screen.Height, screen.Width, screen.Height),
-                new Location(screen.Width, 0, screen.Width, screen.Height),
-
-                // Extras.
-                new Location(100,100, 200, 200)
-            };
+            map = new Map(screen.Width, screen.Height);
         }
 
         // Pulsar una tecla.
@@ -47,45 +39,35 @@ namespace RpgProject
                 MoveLeft();
             else if (e.Key == Key.D)
                 MoveRight();
+
+        }
+
+        private void TryMove(Collide c) {
+            if (Collide.CanMove(c, map.CurrenStage))
+                player.Location = c;
         }
 
         // Movto arriba.
         public void MoveUp() {
-            player.CheckLocation.Move(0, -player.Velocity);
-            if (Location.CanMove(player.CheckLocation, map))
-                player.Location = player.CheckLocation.Copy();
-            else
-                player.CheckLocation = player.Location.Copy();
+            TryMove(player.Location.Move(0, -player.Velocity * 4));
             Canvas.SetTop(player.Img, player.Location.Y1);
         }
 
         // Movto abajo
         public void MoveDown() {
-            player.CheckLocation.Move(0, player.Velocity);
-            if (Location.CanMove(player.CheckLocation, map))
-                player.Location = player.CheckLocation.Copy();
-            else
-                player.CheckLocation = player.Location.Copy();
+            TryMove(player.Location.Move(0, player.Velocity * 4));
             Canvas.SetTop(player.Img, player.Location.Y1);
         }
 
         // Movto izq
         public void MoveLeft() {
-            player.CheckLocation.Move(-player.Velocity, 0);
-            if (Location.CanMove(player.CheckLocation, map))
-                player.Location = player.CheckLocation.Copy();
-            else
-                player.CheckLocation = player.Location.Copy();
+            TryMove(player.Location.Move(-player.Velocity * 4, 0));
             Canvas.SetLeft(player.Img, player.Location.X1);
         }
 
         // Movto der
         public void MoveRight() {
-            player.CheckLocation.Move(player.Velocity, 0);
-            if (Location.CanMove(player.CheckLocation, map))
-                player.Location = player.CheckLocation.Copy();
-            else
-                player.CheckLocation = player.Location.Copy();
+            TryMove(player.Location.Move(player.Velocity * 4, 0));
             Canvas.SetLeft(player.Img, player.Location.X1);
         }
     }

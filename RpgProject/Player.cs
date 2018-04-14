@@ -7,18 +7,17 @@ namespace RpgProject
     public class Player  
     {
         // Campos
-        const double SIZE = 50;
+        const double SIZE = 32;
 
         // Ctor
-        public Player() {
-            Velocity = 10;
+        public Player(double posIni) {
+            Velocity = 4;
             Img = new Rectangle {
                 Width = SIZE,
                 Height = SIZE,
                 Fill = Brushes.Yellow
             };
-            Location = new Location(0, 0, SIZE, SIZE);
-            CheckLocation = new Location(0, 0, SIZE, SIZE);
+            Location = new Collide(posIni, posIni, SIZE + posIni, SIZE + posIni);
             Canvas.SetTop(Img, Location.Y1);
             Canvas.SetLeft(Img, Location.X1);
         }
@@ -26,7 +25,6 @@ namespace RpgProject
         // Propiedades
         public double Velocity { get; set; }
         public Rectangle Img { get; set; }
-        public Location Location { get; set; }
-        public Location CheckLocation { get; set; }
+        public Collide Location { get; set; }
     }
 }
